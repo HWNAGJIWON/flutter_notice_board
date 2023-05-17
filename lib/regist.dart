@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:notice_board/main.dart';
@@ -82,43 +85,48 @@ class RegisterScreen extends State<RegisterScreenStateful> {
                 Flexible(
                   fit: FlexFit.loose,
                   child: ElevatedButton(
-                      onPressed: () {
-                        flutterToast("RaisedButton 클릭됨");
+                      onPressed: () async {
                         log.d("0516 비밀번호 : ${_pwEditController.text}");
                         log.d("0516 제목 : ${_titleEditController.text}");
                         log.d("0516 내용 : ${_contentEditController.text}");
 
                         if (_pwEditController.text.isEmpty) {
                           flutterToast("비밀번호를 입력해주세요.");
+                        } else if (_pwEditController.text.length != 4) {
+                          flutterToast("비밀번호를 4자리 입력해주세요.");
                         } else if (_titleEditController.text.isEmpty) {
                           flutterToast("제목을 입력해주세요.");
                         } else if (_contentEditController.text.isEmpty) {
                           flutterToast("내용을 입력해주세요.");
                         } else {
                           // json 만들어서 + 값 담아서
+                          Map<String, String> post = {
+                            "memberName": "jiwon",
+                            "password": _pwEditController.text.toString(),
+                            "title": _titleEditController.text.toString(),
+                            "content": _contentEditController.text.toString()
+                          };
+
+                          var sendContent = jsonEncode(post);
+                          log.d("sendContent dart : $sendContent");
 
                           // http로 json 전송
+                          var response = await http.post(
+                              Uri.parse("$url/api/posts"),
+                              headers: {'Content-Type' : 'application/json',},
+                              body: sendContent);
 
-                          // 메인 화면으로 라우트
-                          Navigator.pop(context);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => MyApp()),
-                          );
-
-                          // _postRequest() async {
-                          //   String url = 'http://example.com/login';
-                          //
-                          //   http.Response response = await http.post(
-                          //     Uri.parse('$url/api/posts'),
-                          //     headers: <String, String> {
-                          //       'Content-Type': 'application/x-www-form-urlencoded',
-                          //     },
-                          //     body: <Post> {
-                          //
-                          //     },
-                          //   );
-                          // }
+                          if (response.statusCode == 201) {
+                            log.d("dart 등록에 성공했습니다.");
+                            // 메인 화면으로 라우트
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => MyApp()),
+                            );
+                          } else {
+                            log.d("dart 등록 에러");
+                          }
 
                           // // 이건 받을 때 하는건가?
                           // FutureBuilder(builder: (BuildContext context,
@@ -209,11 +217,5 @@ class RegisterScreen extends State<RegisterScreenStateful> {
         ),
       ),
     );
-  }
-
-  @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    throw UnimplementedError();
   }
 }

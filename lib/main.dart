@@ -55,19 +55,25 @@ class _MyAppState extends State<MyApp> {
                     icon: const Icon(Icons.add_rounded))
               ],
             ),
-            body: ListView.builder(
-              itemCount: 1,
-              itemBuilder: (BuildContext context, int index) {
-                Post post = _posts;
-                return ListTile(
-                  leading: const Icon(
-                    Icons.account_circle_rounded,
-                    color: Colors.blue,
-                  ),
-                  trailing: Text(timeChanger(post.body.posts[index].createdAt.toString())),
-                  title: Text(post.body.posts[index].title),
-                );
+            body: RefreshIndicator(
+              onRefresh: () async {
+                Services.getInfo().then((value) {
+                  setState(() {
+                    _posts = value;
+                    loading = true;
+                  });
+                });
               },
+              child: ListView.builder(
+                itemCount: _posts.body.posts.length,
+                itemBuilder: (BuildContext context, int index) {
+                  Post post = _posts;
+                  return ListTile(
+                    trailing: Text(timeChanger(post.body.posts[index].createdAt.toString())),
+                    title: Text(post.body.posts[index].title),
+                  );
+                },
+              ),
             )));
   } //
 }

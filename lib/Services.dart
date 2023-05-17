@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'Post.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,7 +17,7 @@ class Services{
     try{
       final response = await http.get(Uri.parse('$url/api/posts'));
       if (response.statusCode == 200){
-        final Post posts = postFromJson(response.body);
+        final Post posts = postFromJson(utf8.decode(response.bodyBytes));
         return posts;
       }
       else{
