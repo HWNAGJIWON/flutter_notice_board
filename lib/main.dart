@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
                             builder: (context) => RegisterScreenStateful()),
                       );
                     },
-                    icon: Icon(Icons.add_rounded))
+                    icon: const Icon(Icons.add_rounded))
               ],
             ),
             body: ListView.builder(
