@@ -7,5 +7,5 @@
 
 ## Apk download
 - [x] 05/17 버전 [다운로드](https://github.com/HWNAGJIWON/flutter_notice_board/blob/main/android/app/release/%EA%B2%8C%EC%8B%9C%ED%8C%90-0517.apk)
-- [ ] 
+
 
